@@ -13,21 +13,23 @@ func startRepl() {
     for {
         fmt.Printf("Pokedex > ")
         scanner.Scan()
-        input := scanner.Text()
-        cleanInput := getCleanInput(input)
-        commands := GetCommands()
-
-        for _, word := range cleanInput {
-            command, ok := commands[word]
-            if !ok {
-                fmt.Printf("Unknown command: %s\n", word)
-                continue
-            }
-            err := command.callback()
-            if err!= nil {
-                fmt.Printf("Error: %s\n\n", err.Error())
-            }
+        
+        words := getCleanInput(scanner.Text())
+        if len(words) == 0 {
+            continue
         }
+        commandName := words[0]
+        command, exist := GetCommands()[commandName] 
+        if !exist {
+            fmt.Printf("Unknown command: %s\n", commandName)
+            continue
+        }
+        err := command.callback()
+        if err != nil {
+            fmt.Println(err)
+            continue
+        }
+
     }
 }
 

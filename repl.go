@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
-	"github.com/ItzTass/PokeDex/pokeapi"
+	"github.com/ItzTass/PokeDex/internal/pokeapi"
 )
 
 func startRepl() {
@@ -26,7 +27,10 @@ func startRepl() {
             fmt.Printf("Unknown command: %s\n", commandName)
             continue
         }
-        err := command.callback()
+        configur := config{
+            pokeapiClient: pokeapi.NewClient(time.Minute),
+        }
+        err := command.callback(&configur)
         if err != nil {
             fmt.Println(err)
             continue
@@ -35,14 +39,9 @@ func startRepl() {
     }
 }
 
-type cliCommand struct {
-	name 		string
-	description string
-	callback 	func() error	
-}
 
 func GetCommands() map[string]cliCommand { 
-	return map[string]cliCommand {
+    return map[string]cliCommand {
         "help": {
             name: "help",
             description: "Displays a help message",
@@ -56,7 +55,7 @@ func GetCommands() map[string]cliCommand {
         "map": {
             name: "map",
             description: "Display the names of 20 locations in the pokemons world, each call displays the next 20",
-            callback: commandMap,
+            callback: commandMapf,
         },
     }
 }
@@ -64,10 +63,16 @@ func GetCommands() map[string]cliCommand {
 func getCleanInput(input string) []string {
     words := strings.Fields(strings.ToLower(input))
     return words
-} 
+    } 
+    
+    type config struct {
+        pokeapiClient     pokeapi.Client
+        nextLocationsURL *string
+        prevLocationsURL *string
+    }
 
-type config struct {
-    pokeapiClient     pokeapi.Client
-	nextLocationsURL *string
-	prevLocationsURL *string
-}
+    type cliCommand struct {
+        name 		string
+        description string
+        callback 	func(*config) error	
+    }

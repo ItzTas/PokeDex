@@ -5,12 +5,11 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/ItzTass/PokeDex/internal/pokeapi"
 )
 
-func startRepl() {
+func startRepl(cfg *config) {
     scanner := bufio.NewScanner(os.Stdin)
 
     for {
@@ -27,10 +26,7 @@ func startRepl() {
             fmt.Printf("Unknown command: %s\n", commandName)
             continue
         }
-        configur := config{
-            pokeapiClient: pokeapi.NewClient(time.Minute),
-        }
-        err := command.callback(&configur)
+        err := command.callback(cfg)
         if err != nil {
             fmt.Println(err)
             continue

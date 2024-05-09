@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/ItzTass/PokeDex/pokeapi"
 )
 
 func startRepl() {
@@ -65,6 +67,7 @@ func getCleanInput(input string) []string {
 } 
 
 type config struct {
+    pokeapiClient     pokeapi.Client
 	nextLocationsURL *string
 	prevLocationsURL *string
 }

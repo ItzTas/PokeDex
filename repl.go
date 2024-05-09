@@ -54,7 +54,7 @@ func GetCommands() map[string]cliCommand {
         "map": {
             name: "map",
             description: "Display the names of 20 locations in the pokemons world, each call displays the next 20",
-            callback: commandMap(),
+            callback: commandMap,
         },
     }
 }
@@ -63,3 +63,8 @@ func getCleanInput(input string) []string {
     words := strings.Fields(strings.ToLower(input))
     return words
 } 
+
+type config struct {
+	nextLocationsURL *string
+	prevLocationsURL *string
+}

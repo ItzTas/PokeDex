@@ -1,56 +1,56 @@
-package cache
+package pokecache
 
 import (
 	"sync"
 	"time"
 )
 
-func NewCache(interval time.Duration) *Cache {
-	c := &Cache{
-		entry: map[string]cacheEntry{},
+func NewCache(interval time.Duration) Cache {
+	c := Cache{
+		cache: map[string]cacheEntry{},
+		mux: &sync.Mutex{},
 	}
-	go c.readloop(interval)
+	go c.reapLoop(interval)
 	return c
 }
 
 type Cache struct {
-	entry 	 map[string]cacheEntry
-	mu 	   	 sync.Mutex
+	cache map[string]cacheEntry
+	mux   *sync.Mutex
 }
 
 func (c *Cache) Add(key string, val []byte) {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-	c.entry[key] = cacheEntry{
+	c.mux.Lock()
+	defer c.mux.Unlock()
+	c.cache[key] = cacheEntry{
 		val: val,
-		createdAt: time.Now(),
+		createdAt: time.Now().UTC(),
 	}
 } 
 
 func (c *Cache) Get(key string) ([]byte, bool) {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-	r, ok := c.entry[key]
+	c.mux.Lock()
+	defer c.mux.Unlock()
+	r, ok := c.cache[key]
 	if !ok {
 		return []byte{}, false
 	}
 	return r.val, true
 }
 
-func (c *Cache) readloop(interval time.Duration) {
+func (c *Cache) reapLoop(interval time.Duration) {
 	ticker := time.NewTicker(interval)
-	for {
-		t := <- ticker.C
-		c.mu.Lock()
-		var to_remove []string
-		for key, value := range c.entry {
-			if t.After(value.createdAt.Add(interval)){
-				to_remove = append(to_remove, key)
-			}
+	for range ticker.C {
+		c.reap(time.Now().UTC(), interval)
+	}
+}
+
+func (c *Cache) reap(now time.Time, last time.Duration) {
+	c.mux.Lock()
+	defer c.mux.Unlock()
+	for k, v := range c.cache {
+		if v.createdAt.Before(now.Add(-last)) {
+			delete(c.cache, k)
 		}
-		for _, key := range to_remove {
-			delete(c.entry, key)
-		}
-		c.mu.Unlock()
 	}
 }

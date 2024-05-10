@@ -15,12 +15,8 @@ func commandMapf(config *config) error {
 		fmt.Println(r.Name)
 	}
 	fmt.Println("")
-	if res.Next != nil {
-		config.nextLocationsURL = res.Next
-		config.prevLocationsURL = res.Previous
-	} else {
-		fmt.Println("Reached the end of locations or no next URL available.")
-	}
+	config.nextLocationsURL = res.Next
+	config.prevLocationsURL = res.Previous
 	return nil
 }
 

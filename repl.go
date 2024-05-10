@@ -4,10 +4,13 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/ItzTass/PokeDex/internal/pokeapi"
 )
+
+var commandsMaps []string = []string{"map", "mapb"}
 
 func startRepl(cfg *config) {
     scanner := bufio.NewScanner(os.Stdin)
@@ -21,6 +24,15 @@ func startRepl(cfg *config) {
             continue
         }
         commandName := words[0]
+        if (commandName == "map" || commandName == "mapb") && len(words) > 1 {
+            for _, c := range words {
+                if !slices.Contains(commandsMaps, c){
+                    fmt.Printf("\nCannot use another command with the map: %s\n", c)
+                }
+                GetCommands()[c].callback(cfg)
+            }  
+            continue
+        }
         command, exist := GetCommands()[commandName] 
         if !exist {
             fmt.Printf("Unknown command: %s\n", commandName)

@@ -53,6 +53,11 @@ func GetCommands() map[string]cliCommand {
             description: "Display the names of 20 locations in the pokemons world, each call displays the next 20",
             callback: commandMapf,
         },
+        "mapb": {
+            name: "mapb",
+            description: "Display the names of the previous 20 locations in the pokemons world",
+            callback: commandMapb,
+        },
     }
 }
 

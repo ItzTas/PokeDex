@@ -12,6 +12,8 @@ import (
 
 var commandsMaps []string = []string{"map", "mapb"}
 
+var paramsHelp []string = []string{"--help", "-h"}
+
 func startRepl(cfg *config) {
     scanner := bufio.NewScanner(os.Stdin)
 
@@ -29,7 +31,7 @@ func startRepl(cfg *config) {
                 if !slices.Contains(commandsMaps, c){
                     fmt.Printf("\nCannot use another command with the map: %s\n", c)
                 }
-                GetCommands()[c].callback(cfg)
+                GetCommands()[c].callback(cfg, "")
             }  
             continue
         }
@@ -38,7 +40,7 @@ func startRepl(cfg *config) {
             fmt.Printf("Unknown command: %s\n", commandName)
             continue
         }
-        err := command.callback(cfg)
+        err := command.callback(cfg, "")
         if err != nil {
             fmt.Println(err)
             continue
@@ -87,5 +89,5 @@ func getCleanInput(input string) []string {
     type cliCommand struct {
         name 		string
         description string
-        callback 	func(*config) error	
+        callback 	func(*config, string) error	
     }

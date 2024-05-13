@@ -2,9 +2,21 @@ package main
 
 import (
 	"fmt"
+	"slices"
 )
 
-func commandHelp(c *config) error {
+func commandHelp(co *config, s string) error {
+	if s == "" {
+		return executeCommandHelp()
+	}
+	if slices.Contains(paramsHelp, s) {
+		commandHelpHelp()
+		return nil
+	}
+	return fmt.Errorf("unkown second parameter: %s", s)
+}
+
+func executeCommandHelp() error {
 	fmt.Println("\nWelcome to the PokeDex!")
 	fmt.Println("Usage:")
 	fmt.Println("")
@@ -13,4 +25,8 @@ func commandHelp(c *config) error {
 		fmt.Println("")
 	}
 	return nil
+}
+
+func commandHelpHelp() {
+	fmt.Printf("\n %s: %s\n", GetCommands()["help"].name, GetCommands()["help"].description)
 }

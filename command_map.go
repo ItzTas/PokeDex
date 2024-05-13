@@ -3,9 +3,21 @@ package main
 import (
 	"errors"
 	"fmt"
+	"slices"
 )
 
-func commandMapf(config *config) error {
+func commandMapf(config *config, s string) error {
+	if s == "" {
+		return executeMapf(config)
+	}
+	if slices.Contains(paramsHelp, s) {
+		showMapfHelp()
+		return nil
+	}
+	return fmt.Errorf("unkown second parameter: %s", s)
+}
+
+func executeMapf(config *config) error {
 	res, err := config.pokeapiClient.ListLocations(config.nextLocationsURL)
 	if err != nil {
 		return err
@@ -20,8 +32,27 @@ func commandMapf(config *config) error {
 	return nil
 }
 
+func showMapfHelp() {
+	fmt.Printf("\n %s: %s\n", GetCommands()["map"].name, GetCommands()["map"].description)
+}
 
-func commandMapb(config *config) error {
+func commandMapb(config *config, s string) error {
+	if s == "" {
+		return executeMapb(config)
+	}
+	if slices.Contains(paramsHelp, s) {
+		showMapbHelp()
+		return nil
+	}
+	return fmt.Errorf("unkown second parameter: %s", s)
+}
+
+func showMapbHelp() {
+	fmt.Printf("\n %s: %s\n", GetCommands()["mapb"].name, GetCommands()["mapb"].description)
+}
+
+
+func executeMapb(config *config) error {
 	if config.prevLocationsURL == nil {
 		return errors.New("there are no previous cities")
 	}

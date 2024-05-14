@@ -86,6 +86,7 @@ func getCleanInput(input string) []string {
         pokeapiClient     pokeapi.Client
         nextLocationsURL *string
         prevLocationsURL *string
+        pokedex map[string]pokeapi.PokemonStatsRes
     }
 
     type cliCommand struct {

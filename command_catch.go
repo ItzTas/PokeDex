@@ -30,6 +30,7 @@ func commandCatchexecute(cfg *config, s string) error {
 		return nil
 	}
 	fmt.Printf("%s was caught!\n\n", s)
+	cfg.pokeAdd(s, poke)
 	return nil
 }
 

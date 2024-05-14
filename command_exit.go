@@ -13,6 +13,7 @@ func commandExit(c *config, s string) error {
 	}
 	if slices.Contains(paramsHelp, s) {
 		commandExitHelp()
+		return nil
 	}
 	return fmt.Errorf("unkown second parameter: %s", s)
 }

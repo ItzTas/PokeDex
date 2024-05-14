@@ -4,13 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"slices"
 	"strings"
 
 	"github.com/ItzTass/PokeDex/internal/pokeapi"
 )
-
-var commandsMaps []string = []string{"map", "mapb"}
 
 var paramsHelp []string = []string{"--help", "-h"}
 
@@ -26,21 +23,16 @@ func startRepl(cfg *config) {
             continue
         }
         commandName := words[0]
-        if (commandName == "map" || commandName == "mapb") && len(words) > 1 {
-            for _, c := range words {
-                if !slices.Contains(commandsMaps, c){
-                    fmt.Printf("\nCannot use another command with the map: %s\n", c)
-                }
-                GetCommands()[c].callback(cfg, "")
-            }  
-            continue
+        var param string
+        if len(words) > 1 {
+            param = words[1]
         }
         command, exist := GetCommands()[commandName] 
         if !exist {
             fmt.Printf("Unknown command: %s\n", commandName)
             continue
         }
-        err := command.callback(cfg, "")
+        err := command.callback(cfg, param)
         if err != nil {
             fmt.Println(err)
             continue
@@ -64,13 +56,23 @@ func GetCommands() map[string]cliCommand {
         },
         "map": {
             name: "map",
-            description: "Display the names of 20 locations in the pokemons world, each call displays the next 20",
+            description: "Displays the names of 20 locations in the pokemons world, each call displays the next 20",
             callback: commandMapf,
         },
         "mapb": {
             name: "mapb",
-            description: "Display the names of the previous 20 locations in the pokemons world",
+            description: "Displays the names of the previous 20 locations in the pokemons world",
             callback: commandMapb,
+        },
+        "explore": {
+            name: "explore",
+            description: "Displays the pokemons of a given area in the world",
+            callback: commandExplore,
+        },
+        "catch": {
+            name: "catch",
+            description: "Tries to catch a pokemon",
+            callback: commandCatch,
         },
     }
 }

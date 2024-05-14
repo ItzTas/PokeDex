@@ -7,12 +7,12 @@ import (
 )
 
 func commandCatch(cfg *config, s string) error {
-	if s != "" {
-		return commandCatchexecute(cfg, s)
-	}
 	if slices.Contains(paramsHelp, s) {
 		commandCatchHelp()
 		return nil
+	}
+	if s != "" {
+		return commandCatchexecute(cfg, s)
 	}
 	return fmt.Errorf("invalid second parameter: %s", s)
 }
@@ -24,7 +24,6 @@ func commandCatchexecute(cfg *config, s string) error {
 	}
 	fmt.Printf("\nThrowing a Pokeball at %s...\n", s)
 	prob := rand.Intn(360) + 1
-	fmt.Println(poke.BaseExperience, prob)
 	if prob < poke.BaseExperience {
 		fmt.Printf("%s escaped!\n\n", s)
 		return nil
